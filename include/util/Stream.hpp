@@ -15,9 +15,9 @@
 #include "Geode/binding/EnterEffectAnimValue.hpp"
 #include "../import_export.hpp"
 
-#define PA_OPERATOR_READ(type) SABE_PA_DLL virtual void operator>>(type& o_value) { read(reinterpret_cast<char*>(&o_value), sizeof(type)); }
+#define PA_OPERATOR_READ(type) virtual void operator>>(type& o_value) { read(reinterpret_cast<char*>(&o_value), sizeof(type)); }
 
-#define PA_OPERATOR_WRITE(type) SABE_PA_DLL virtual void operator<<(type& i_value) { write(reinterpret_cast<char*>(&i_value), sizeof(type)); }
+#define PA_OPERATOR_WRITE(type) virtual void operator<<(type& i_value) { write(reinterpret_cast<char*>(&i_value), sizeof(type)); }
 
 namespace persistenceAPI {
     class Stream {
@@ -27,12 +27,12 @@ namespace persistenceAPI {
         int m_PAVersion;
         const char m_zeros[256] = {};
     public:
-        SABE_PA_DLL Stream() {
+        Stream() {
             m_stream = nullptr;
             m_bytesRead = nullptr;
             m_PAVersion = -1;
         };
-        SABE_PA_DLL Stream(std::string i_filePath, int i_PAVersion, bool i_trunc = false) {
+        Stream(std::string i_filePath, int i_PAVersion, bool i_trunc = false) {
             int l_mode = std::ios_base::binary | std::ios_base::out;
             if (std::filesystem::exists(i_filePath)) {
                 l_mode |= std::ios_base::in;
@@ -42,7 +42,7 @@ namespace persistenceAPI {
             //geode::log::info("@@@@@ PAVersion set to {} @@@@@", i_PAVersion);
             m_PAVersion = i_PAVersion;
         }
-        SABE_PA_DLL Stream(std::string i_filePath, unsigned int* i_bytesRead, int i_PAVersion, bool i_trunc = false) {
+        Stream(std::string i_filePath, unsigned int* i_bytesRead, int i_PAVersion, bool i_trunc = false) {
             int l_mode = std::ios_base::binary | std::ios_base::out;
             if (std::filesystem::exists(i_filePath)) {
                 l_mode |= std::ios_base::in;
@@ -53,7 +53,7 @@ namespace persistenceAPI {
             //geode::log::info("@@@@@ PAVersion set to {} @@@@@", i_PAVersion);
             m_PAVersion = i_PAVersion;
         }
-        SABE_PA_DLL ~Stream() { delete m_stream; }
+        ~Stream() { delete m_stream; }
 
         PA_OPERATOR_READ(bool)
         PA_OPERATOR_READ(char)
@@ -103,7 +103,7 @@ namespace persistenceAPI {
         PA_OPERATOR_WRITE(PulseEffectType)
         PA_OPERATOR_WRITE(GhostType)
 
-        SABE_PA_DLL bool setFile(std::string i_filePath, unsigned int* i_bytesRead, int i_PAVersion, bool i_trunc = false) {
+        bool setFile(std::string i_filePath, unsigned int* i_bytesRead, int i_PAVersion, bool i_trunc = false) {
             if (m_stream) {
                 delete m_stream;
             }
@@ -123,7 +123,7 @@ namespace persistenceAPI {
             return true;
         }
 
-        SABE_PA_DLL bool setFile(std::string i_filePath, int i_PAVersion, bool i_trunc = false) {
+        bool setFile(std::string i_filePath, int i_PAVersion, bool i_trunc = false) {
             if (m_stream) {
                 delete m_stream;
             }
@@ -142,7 +142,7 @@ namespace persistenceAPI {
             return true;
         }
 
-        SABE_PA_DLL void read(char* o_value, int i_size) {
+        void read(char* o_value, int i_size) {
             #if defined(PA_DEBUG)
                 //geode::log::info("---- Doing read at offset {} | size {} ----", static_cast<uint32_t>(m_stream->tellg()), i_size);
             #endif
@@ -153,20 +153,20 @@ namespace persistenceAPI {
             }
         }
 
-        SABE_PA_DLL void ignore(int i_size) {
+        void ignore(int i_size) {
             m_stream->ignore(i_size);
             if (m_bytesRead) *m_bytesRead += i_size;
         }
 
-        SABE_PA_DLL void write(char* i_value, int i_size) {
+        void write(char* i_value, int i_size) {
             m_stream->write(i_value, i_size);
         }
 
-        SABE_PA_DLL void writeZero(int i_size) {
+        void writeZero(int i_size) {
             m_stream->write(m_zeros, i_size);
         }
 
-        SABE_PA_DLL void seek(int i_pos, bool i_fromEnd = false) {
+        void seek(int i_pos, bool i_fromEnd = false) {
             if (i_fromEnd) {
                 m_stream->seekp(i_pos, std::ios_base::end);
                 return;
@@ -174,19 +174,19 @@ namespace persistenceAPI {
             m_stream->seekp(i_pos, std::ios_base::beg);
         }
 
-        SABE_PA_DLL void flush() {
+        void flush() {
             if (m_stream) {
                 m_stream->flush();
             }
         }
 
-        SABE_PA_DLL void clear() {
+        void clear() {
             if (m_stream) {
                 m_stream->clear();
             }
         }
 
-        SABE_PA_DLL void end() {
+        void end() {
             if (m_stream) {
                 m_stream->flush();
                 m_stream->close();
@@ -196,12 +196,12 @@ namespace persistenceAPI {
             m_PAVersion = -1;
         }
 
-        SABE_PA_DLL inline int getPAVersion() {
+        inline int getPAVersion() {
             //geode::log::info("@@@@@ PAVersion get {} @@@@@", m_PAVersion);
             return m_PAVersion;
         }
 
-        SABE_PA_DLL inline void setPAVersion(int i_PAVersion) {
+        inline void setPAVersion(int i_PAVersion) {
             //geode::log::info("@@@@@ PAVersion set to {} @@@@@", i_PAVersion);
             m_PAVersion = i_PAVersion;
         }
@@ -223,7 +223,7 @@ namespace persistenceAPI {
         // vector
 
         template <class T>
-        SABE_PA_DLL void operator>>(gd::vector<T>& o_value) {
+        void operator>>(gd::vector<T>& o_value) {
             unsigned int l_size;
             read(reinterpret_cast<char*>(&l_size), 4);
             //geode::log::info("VECTOR SIZE in: {}", l_size);
@@ -236,7 +236,7 @@ namespace persistenceAPI {
         }
 
         template <>
-        SABE_PA_DLL void operator>><float>(gd::vector<float>& o_value) {
+        void operator>><float>(gd::vector<float>& o_value) {
             unsigned int l_size;
             read(reinterpret_cast<char*>(&l_size), 4);
             //geode::log::info("VECTOR SIZE in: {}", l_size);
@@ -313,7 +313,7 @@ namespace persistenceAPI {
         // unordered_map
 
         template <class K, class V>
-        SABE_PA_DLL void operator>>(gd::unordered_map<K,V>& o_value) {
+        void operator>>(gd::unordered_map<K,V>& o_value) {
             if (o_value.size() != 0) {
                 o_value.clear();
             }
@@ -331,7 +331,7 @@ namespace persistenceAPI {
         }
 
         template <class K, class V>
-        SABE_PA_DLL void operator>>(gd::unordered_map<K,gd::vector<V>>& o_value) {
+        void operator>>(gd::unordered_map<K,gd::vector<V>>& o_value) {
             if (o_value.size() != 0) {
                 //geode::log::info("VECTOR SIZE SHOULD NOT BE HERE AGRIA: {}", o_value.size());
                 o_value.clear();
@@ -377,7 +377,7 @@ namespace persistenceAPI {
         // unordered_set
 
         template <class K>
-        SABE_PA_DLL void operator>>(gd::unordered_set<K>& o_value) {
+        void operator>>(gd::unordered_set<K>& o_value) {
             if (o_value.size() != 0) {
                 //geode::log::info("VECTOR SIZE SHOULD NOT BE HERE AGRIA: {}", o_value.size());
                 o_value.clear();
@@ -396,7 +396,7 @@ namespace persistenceAPI {
         // map
 
         template <class K, class V>
-        SABE_PA_DLL void operator>>(gd::map<K,V>& o_value) {
+        void operator>>(gd::map<K,V>& o_value) {
             if (o_value.size() != 0) {
                 //geode::log::info("VECTOR SIZE SHOULD NOT BE HERE AGRIA: {}", o_value.size());
                 o_value.clear();
@@ -415,7 +415,7 @@ namespace persistenceAPI {
         }
 
         template <class K, class V>
-        SABE_PA_DLL void operator>>(gd::map<K,gd::vector<V>>& o_value) {
+        void operator>>(gd::map<K,gd::vector<V>>& o_value) {
             if (o_value.size() != 0) {
                 //geode::log::info("VECTOR SIZE SHOULD NOT BE HERE AGRIA: {}", o_value.size());
                 o_value.clear();
@@ -444,7 +444,7 @@ namespace persistenceAPI {
         // set
 
         template <class K>
-        SABE_PA_DLL void operator>>(gd::set<K>& o_value) {
+        void operator>>(gd::set<K>& o_value) {
             if (o_value.size() != 0) {
                 //geode::log::info("VECTOR SIZE SHOULD NOT BE HERE AGRIA: {}", o_value.size());
                 o_value.clear();
@@ -462,7 +462,7 @@ namespace persistenceAPI {
 
         // gd::string
 
-        SABE_PA_DLL void operator>>(gd::string& o_value) {
+        void operator>>(gd::string& o_value) {
             if (o_value.size() != 0) {
                 //geode::log::info("VECTOR SIZE SHOULD NOT BE HERE AGRIA: {}", o_value.size());
                 o_value.clear();
@@ -495,7 +495,7 @@ namespace persistenceAPI {
         // vector
 
         template <class T>
-        SABE_PA_DLL void operator<<(gd::vector<T>& i_value) {
+        void operator<<(gd::vector<T>& i_value) {
             unsigned int l_size = i_value.size();
             //geode::log::info("VECTOR SIZE out: {}", l_size);
             write(reinterpret_cast<char*>(&l_size), 4);
@@ -562,7 +562,7 @@ namespace persistenceAPI {
         // unordered_map
 
         template <class K, class V>
-        SABE_PA_DLL void operator<<(gd::unordered_map<K,V>& i_value) {
+        void operator<<(gd::unordered_map<K,V>& i_value) {
             unsigned int l_size = i_value.size();
             //geode::log::info("Unordered Map SIZE out: {}", l_size);
             write(reinterpret_cast<char*>(&l_size), 4);
@@ -573,7 +573,7 @@ namespace persistenceAPI {
         }
 
         template <class K, class V>
-        SABE_PA_DLL void operator<<(gd::unordered_map<K,gd::vector<V>>& i_value) {
+        void operator<<(gd::unordered_map<K,gd::vector<V>>& i_value) {
             unsigned int l_size = i_value.size();
             //geode::log::info("Unordered Map key->vector<T> SIZE out: {}", l_size);
             write(reinterpret_cast<char*>(&l_size), 4);
@@ -613,7 +613,7 @@ namespace persistenceAPI {
         // unordered_set
 
         template <class K>
-        SABE_PA_DLL void operator<<(gd::unordered_set<K>& i_value) {
+        void operator<<(gd::unordered_set<K>& i_value) {
             unsigned int l_size = i_value.size();
             //geode::log::info("Unordered Set SIZE out: {}", l_size);
             write(reinterpret_cast<char*>(&l_size), 4);
@@ -625,7 +625,7 @@ namespace persistenceAPI {
         // map
 
         template <class K, class V>
-        SABE_PA_DLL void operator<<(gd::map<K,V>& i_value) {
+        void operator<<(gd::map<K,V>& i_value) {
             unsigned int l_size = i_value.size();
             //geode::log::info("Map SIZE out: {}", l_size);
             write(reinterpret_cast<char*>(&l_size), 4);
@@ -636,7 +636,7 @@ namespace persistenceAPI {
         }
 
         template <class K, class V>
-        SABE_PA_DLL void operator<<(gd::map<K,gd::vector<V>>& i_value) {
+        void operator<<(gd::map<K,gd::vector<V>>& i_value) {
             unsigned int l_size = i_value.size();
             //geode::log::info("Unordered Map key->vector<T> SIZE out: {}", l_size);
             write(reinterpret_cast<char*>(&l_size), 4);
@@ -658,7 +658,7 @@ namespace persistenceAPI {
         // set
 
         template <class K>
-        SABE_PA_DLL void operator<<(gd::set<K>& i_value) {
+        void operator<<(gd::set<K>& i_value) {
             unsigned int l_size = i_value.size();
             //geode::log::info("Set SIZE out: {}", l_size);
             write(reinterpret_cast<char*>(&l_size), 4);
@@ -669,7 +669,7 @@ namespace persistenceAPI {
 
         // gd::string
 
-        SABE_PA_DLL void operator<<(gd::string& i_value) {
+        void operator<<(gd::string& i_value) {
             unsigned int l_size = i_value.size();
             write(reinterpret_cast<char*>(&l_size), 4);
             //geode::log::info("String SIZE in: {}", l_size);
