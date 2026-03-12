@@ -253,9 +253,9 @@ inline void persistenceAPI::operator>>(Stream& i_stream, PAGJGameState& o_value)
     SEPARATOR_I
     i_stream >> o_value.m_timeModRelated2;
     SEPARATOR_I
-    UMAP_SEPARATOR_I
-    i_stream >> o_value.m_unkMapPairIntIntInt;
-    UMAP_SEPARATOR_I
+//    UMAP_SEPARATOR_I
+//    i_stream >> o_value.m_unkMapPairIntIntInt;
+//    UMAP_SEPARATOR_I
     SEPARATOR_I
     i_stream >> o_value.m_unkUint13;
     SEPARATOR_I
@@ -598,9 +598,9 @@ inline void persistenceAPI::operator<<(Stream& o_stream, PAGJGameState& i_value)
     SEPARATOR_O
     o_stream << i_value.m_timeModRelated2;
     SEPARATOR_O
-    UMAP_SEPARATOR_O
-    o_stream << i_value.m_unkMapPairIntIntInt;
-    UMAP_SEPARATOR_O
+//    UMAP_SEPARATOR_O
+//    o_stream << i_value.m_unkMapPairIntIntInt;
+//    UMAP_SEPARATOR_O
     SEPARATOR_O
     o_stream << i_value.m_unkUint13;
     SEPARATOR_O
@@ -892,12 +892,12 @@ void PAGJGameState::describe() {
     log::info("[PAGJGameState - describe] m_unkFloat10: {}", m_unkFloat10);
     log::info("[PAGJGameState - describe] m_timeModRelated: {}", m_timeModRelated);
     log::info("[PAGJGameState - describe] m_timeModRelated2: {}", m_timeModRelated2);
-    i = 0;
-    for (gd::pair<std::pair<int, int>, int> l_pair : m_unkMapPairIntIntInt) {
-        log::info("[PAGJGameState - describe] m_unkMapPairIntIntInt element {} key: {}", i, l_pair.first);
-        log::info("[PAGJGameState - describe] m_unkMapPairIntIntInt element {} value: {}", i, l_pair.second);
-        i++;
-    }
+//    i = 0;
+//    for (gd::pair<std::pair<int, int>, int> l_pair : m_unkMapPairIntIntInt) {
+//        log::info("[PAGJGameState - describe] m_unkMapPairIntIntInt element {} key: {}", i, l_pair.first);
+//        log::info("[PAGJGameState - describe] m_unkMapPairIntIntInt element {} value: {}", i, l_pair.second);
+//        i++;
+//    }
     log::info("[PAGJGameState - describe] m_unkUint13: {}", m_unkUint13);
     log::info("[PAGJGameState - describe] m_unkPoint32: {}", m_unkPoint32);
     log::info("[PAGJGameState - describe] m_cameraPosition2: {}", m_cameraPosition2);

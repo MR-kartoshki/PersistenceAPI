@@ -23,7 +23,9 @@ file(GLOB_RECURSE SOURCES
 
 add_library(${PROJECT_NAME} SHARED ${SOURCES})
 
-target_compile_options(${PROJECT_NAME} PRIVATE "-Wno-invalid-offsetof")
+if (NOT MSVC)
+    target_compile_options(${PROJECT_NAME} PRIVATE "-Wno-invalid-offsetof")
+endif()
 
 target_include_directories(${PROJECT_NAME} PUBLIC include)
 
